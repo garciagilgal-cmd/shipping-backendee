@@ -1,0 +1,111 @@
+{
+  "services": [
+    {
+      "id": "ground-shipping",
+      "title": "Ground Shipping",
+      "description": "Reliable 2-5 day ground shipping across the contiguous US with tracking and photo on delivery.",
+      "features": [
+        "2-5 day transit time",
+        "7-day pickup and delivery",
+        "No weekend delivery fees",
+        "Real-time tracking",
+        "Photo on delivery"
+      ],
+      "icon": "truck",
+      "link": "/speed-and-coverage.html"
+    },
+    {
+      "id": "visibility-tracking",
+      "title": "Visibility & Tracking",
+      "description": "Track your packages from warehouse to welcome mat with detailed tracking and proactive notifications.",
+      "features": [
+        "Real-time package tracking",
+        "SMS and email notifications",
+        "Photo on delivery",
+        "Delivery predictions",
+        "Exception alerts"
+      ],
+      "icon": "map-pin",
+      "link": "/visibility-and-tracking.html"
+    },
+    {
+      "id": "api-integration",
+      "title": "API Integration",
+      "description": "Seamlessly integrate Amazon Shipping into your existing workflows with our robust API.",
+      "features": [
+        "RESTful API",
+        "Webhook support",
+        "Bulk operations",
+        "Rate shopping",
+        "Label generation"
+      ],
+      "icon": "code",
+      "link": "/amazon-shipping-api.html"
+    },
+    {
+      "id": "third-party",
+      "title": "Third-Party Integrations",
+      "description": "Connect with popular e-commerce platforms and shipping software you already use.",
+      "features": [
+        "ShipStation",
+        "EasyPost",
+        "Shippo",
+        "Ordoro",
+        "And more..."
+      ],
+      "icon": "plug",
+      "link": "/third-party-integrations.html"
+    },
+    {
+      "id": "dangerous-goods",
+      "title": "Dangerous Goods",
+      "description": "Compliant shipping for regulated items with proper documentation and handling.",
+      "features": [
+        "DOT compliant",
+        "Proper documentation",
+        "Specialized handling",
+        "Hazmat support",
+        "Expert guidance"
+      ],
+      "icon": "alert-triangle",
+      "link": "/dangerous-goods.html"
+    },
+    {
+      "id": "mobile-app",
+      "title": "Mobile App",
+      "description": "Manage your shipments on the go with the Amazon Shipping mobile application.",
+      "features": [
+        "Track packages",
+        "Manage pickups",
+        "View reports",
+        "Get notifications",
+        "Contact support"
+      ],
+      "icon": "smartphone",
+      "link": "/amazon-shipping-app.html"
+    }
+  ],
+  "features": [
+    {
+      "title": "Next-level visibility",
+      "description": "Track your packages from warehouse to welcome mat, complete with photo on delivery. And keep eager customers up to date with SMS and email notifications.",
+      "link": "/visibility-and-tracking.html",
+      "linkText": "Visibility and tracking",
+      "image": "/assets/images/services/visibility.jpg"
+    },
+    {
+      "title": "Coverage you can count on",
+      "description": "Ship throughout the contiguous US in 2-5 days, including remote spots and P.O. boxes. Delight your customers with predictable transit times—7 days a week.",
+      "link": "/speed-and-coverage.html",
+      "linkText": "Speeds and coverage",
+      "image": "/assets/images/services/coverage.jpg"
+    },
+    {
+      "title": "All the extras. No extra fees.",
+      "description": "Transparent rate cards. No additional residential fees or weekend delivery charges. High-fidelity delivery photos (where available), tracking services, and claims resolution all included at no extra charge.",
+      "link": "/get-started.html",
+      "linkText": "Shipping rates",
+      "image": "/assets/images/services/rates.jpg"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "testimonials": [
+    {
+      "id": 1,
+      "quote": "What stood out about Amazon Shipping is that they operate on the same schedule our customers do, seven days a week, no gaps. Our packages move the moment they're picked up, and we have immediate visibility to our shipments. That kind of reliability is hard to find.",
+      "author": "Brandon Friez",
+      "role": "SVP Global Logistics & Supply Chain Intelligence",
+      "company": "Leading E-commerce Brand",
+      "avatar": "/assets/images/testimonials/avatar-1.jpg"
+    },
+    {
+      "id": 2,
+      "quote": "Our ramp-up with Amazon Shipping was the fastest with any shipping service provider in our company's history. Since then, Amazon Shipping has consistently met our transit time expectations and provided reliable on-time delivery performance.",
+      "author": "German Rueda",
+      "role": "Director of Shipping",
+      "company": "Ipsy",
+      "avatar": "/assets/images/testimonials/avatar-2.jpg"
+    },
+    {
+      "id": 3,
+      "quote": "The level of service from the Amazon Shipping team has been top-notch. The integration was seamless, and we're looking forward to continuing this relationship as we scale our business.",
+      "author": "Sarah Mitchell",
+      "role": "VP of Operations",
+      "company": "Fast-Growing Retailer",
+      "avatar": "/assets/images/testimonials/avatar-3.jpg"
+    },
+    {
+      "id": 4,
+      "quote": "Amazon Shipping's transparent pricing and no hidden fees approach has helped us better predict our shipping costs. The weekend delivery without extra charges is a game-changer for our business.",
+      "author": "Michael Chen",
+      "role": "CFO",
+      "company": "Direct-to-Consumer Brand",
+      "avatar": "/assets/images/testimonials/avatar-4.jpg"
+    },
+    {
+      "id": 5,
+      "quote": "The visibility and tracking capabilities are exceptional. Our customers love being able to see photo confirmations of their deliveries. It's helped reduce customer service inquiries significantly.",
+      "author": "Jennifer Lopez",
+      "role": "Customer Experience Manager",
+      "company": "Home Goods Retailer",
+      "avatar": "/assets/images/testimonials/avatar-5.jpg"
+    }
+  ]
+}

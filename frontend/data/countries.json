@@ -1,0 +1,104 @@
+{
+  "countries": [
+    {
+      "code": "US",
+      "name": "United States",
+      "flag": "🇺🇸",
+      "currency": "USD",
+      "language": "en",
+      "phoneCode": "+1",
+      "locale": "en-US",
+      "active": true
+    },
+    {
+      "code": "UK",
+      "name": "United Kingdom",
+      "flag": "🇬🇧",
+      "currency": "GBP",
+      "language": "en",
+      "phoneCode": "+44",
+      "locale": "en-GB",
+      "active": true
+    },
+    {
+      "code": "FR",
+      "name": "France",
+      "flag": "🇫🇷",
+      "currency": "EUR",
+      "language": "fr",
+      "phoneCode": "+33",
+      "locale": "fr-FR",
+      "active": true
+    },
+    {
+      "code": "IT",
+      "name": "Italy",
+      "flag": "🇮🇹",
+      "currency": "EUR",
+      "language": "it",
+      "phoneCode": "+39",
+      "locale": "it-IT",
+      "active": true
+    },
+    {
+      "code": "ES",
+      "name": "Spain",
+      "flag": "🇪🇸",
+      "currency": "EUR",
+      "language": "es",
+      "phoneCode": "+34",
+      "locale": "es-ES",
+      "active": true
+    },
+    {
+      "code": "IN",
+      "name": "India",
+      "flag": "🇮🇳",
+      "currency": "INR",
+      "language": "en",
+      "phoneCode": "+91",
+      "locale": "en-IN",
+      "active": true
+    },
+    {
+      "code": "CA",
+      "name": "Canada",
+      "flag": "🇨🇦",
+      "currency": "CAD",
+      "language": "en",
+      "phoneCode": "+1",
+      "locale": "en-CA",
+      "active": false
+    },
+    {
+      "code": "AU",
+      "name": "Australia",
+      "flag": "🇦🇺",
+      "currency": "AUD",
+      "language": "en",
+      "phoneCode": "+61",
+      "locale": "en-AU",
+      "active": false
+    },
+    {
+      "code": "JP",
+      "name": "Japan",
+      "flag": "🇯🇵",
+      "currency": "JPY",
+      "language": "ja",
+      "phoneCode": "+81",
+      "locale": "ja-JP",
+      "active": false
+    },
+    {
+      "code": "DE",
+      "name": "Germany",
+      "flag": "🇩🇪",
+      "currency": "EUR",
+      "language": "de",
+      "phoneCode": "+49",
+      "locale": "de-DE",
+      "active": false
+    }
+  ]
+}

@@ -1,0 +1,191 @@
+{
+  "sampleTrackingIds": [
+    "1Z999AA10123456784",
+    "1Z888BB20234567895",
+    "1Z777CC30345678906",
+    "1Z666DD40456789017",
+    "1Z555EE50567890128"
+  ],
+  "trackingData": {
+    "1Z999AA10123456784": {
+      "id": "1Z999AA10123456784",
+      "status": "delivered",
+      "statusText": "Delivered",
+      "estimatedDelivery": null,
+      "actualDelivery": "2024-01-15T14:30:00Z",
+      "origin": {
+        "city": "Seattle",
+        "state": "WA",
+        "zip": "98101"
+      },
+      "destination": {
+        "city": "New York",
+        "state": "NY",
+        "zip": "10001"
+      },
+      "weight": "2.5 lbs",
+      "dimensions": {
+        "length": 12,
+        "width": 8,
+        "height": 6
+      },
+      "service": "Ground",
+      "events": [
+        {
+          "status": "Delivered",
+          "description": "Package delivered to front porch",
+          "location": "New York, NY",
+          "timestamp": "2024-01-15T14:30:00Z",
+          "completed": true,
+          "hasPhoto": true
+        },
+        {
+          "status": "Out for Delivery",
+          "description": "Package is out for delivery",
+          "location": "New York, NY",
+          "timestamp": "2024-01-15T08:15:00Z",
+          "completed": true,
+          "hasPhoto": false
+        },
+        {
+          "status": "Arrived at Facility",
+          "description": "Package arrived at local facility",
+          "location": "New York, NY",
+          "timestamp": "2024-01-15T05:00:00Z",
+          "completed": true,
+          "hasPhoto": false
+        },
+        {
+          "status": "Departed Facility",
+          "description": "Package departed facility",
+          "location": "Chicago, IL",
+          "timestamp": "2024-01-14T22:30:00Z",
+          "completed": true,
+          "hasPhoto": false
+        },
+        {
+          "status": "Arrived at Facility",
+          "description": "Package arrived at facility",
+          "location": "Chicago, IL",
+          "timestamp": "2024-01-14T18:00:00Z",
+          "completed": true,
+          "hasPhoto": false
+        },
+        {
+          "status": "Picked Up",
+          "description": "Package picked up from shipper",
+          "location": "Seattle, WA",
+          "timestamp": "2024-01-13T16:45:00Z",
+          "completed": true,
+          "hasPhoto": false
+        }
+      ]
+    },
+    "1Z888BB20234567895": {
+      "id": "1Z888BB20234567895",
+      "status": "in-transit",
+      "statusText": "In Transit",
+      "estimatedDelivery": "2024-01-18T20:00:00Z",
+      "actualDelivery": null,
+      "origin": {
+        "city": "Los Angeles",
+        "state": "CA",
+        "zip": "90001"
+      },
+      "destination": {
+        "city": "Miami",
+        "state": "FL",
+        "zip": "33101"
+      },
+      "weight": "1.8 lbs",
+      "dimensions": {
+        "length": 10,
+        "width": 6,
+        "height": 4
+      },
+      "service": "Express",
+      "events": [
+        {
+          "status": "In Transit",
+          "description": "Package in transit to next facility",
+          "location": "Dallas, TX",
+          "timestamp": "2024-01-16T12:00:00Z",
+          "completed": true,
+          "hasPhoto": false
+        },
+        {
+          "status": "Departed Facility",
+          "description": "Package departed facility",
+          "location": "Los Angeles, CA",
+          "timestamp": "2024-01-16T02:00:00Z",
+          "completed": true,
+          "hasPhoto": false
+        },
+        {
+          "status": "Picked Up",
+          "description": "Package picked up from shipper",
+          "location": "Los Angeles, CA",
+          "timestamp": "2024-01-15T18:30:00Z",
+          "completed": true,
+          "hasPhoto": false
+        }
+      ]
+    },
+    "1Z777CC30345678906": {
+      "id": "1Z777CC30345678906",
+      "status": "pending",
+      "statusText": "Pending",
+      "estimatedDelivery": "2024-01-20T20:00:00Z",
+      "actualDelivery": null,
+      "origin": {
+        "city": "Portland",
+        "state": "OR",
+        "zip": "97201"
+      },
+      "destination": {
+        "city": "Boston",
+        "state": "MA",
+        "zip": "02101"
+      },
+      "weight": "3.2 lbs",
+      "dimensions": {
+        "length": 14,
+        "width": 10,
+        "height": 8
+      },
+      "service": "Ground",
+      "events": [
+        {
+          "status": "Label Created",
+          "description": "Shipping label created, awaiting pickup",
+          "location": "Portland, OR",
+          "timestamp": "2024-01-16T09:00:00Z",
+          "completed": true,
+          "hasPhoto": false
+        }
+      ]
+    }
+  },
+  "statusDefinitions": {
+    "delivered": {
+      "label": "Delivered",
+      "description": "Package has been delivered",
+      "color": "#067d62"
+    },
+    "in-transit": {
+      "label": "In Transit",
+      "description": "Package is on its way",
+      "color": "#0073bb"
+    },
+    "pending": {
+      "label": "Pending",
+      "description": "Shipment information received",
+      "color": "#ff9900"
+    },
+    "exception": {
+      "label": "Exception",
+      "description": "Delivery exception occurred",
+      "color": "#d13212"
+    }
+  }
+}

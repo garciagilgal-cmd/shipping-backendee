@@ -1,0 +1,85 @@
+{
+  "categories": [
+    {
+      "name": "Shipping Requirements",
+      "items": [
+        {
+          "question": "Can I use Amazon Shipping to deliver orders placed on my own website?",
+          "answer": "Yes, Amazon Shipping can deliver orders placed on your own website, Amazon.com, and other selling channels. Our service integrates with many popular e-commerce platforms and shipping software."
+        },
+        {
+          "question": "Can I ship Dangerous Goods with Amazon Shipping?",
+          "answer": "Amazon Shipping accepts certain dangerous goods that comply with DOT regulations. Please review our Dangerous Goods policy or contact our support team for specific requirements and restrictions."
+        },
+        {
+          "question": "What weight and dimensions can I ship with Amazon Shipping?",
+          "answer": "Amazon Shipping accepts packages up to 50 lbs and with dimensions up to 108 inches in length or 165 inches in length plus girth. Special rates may apply for oversized packages."
+        },
+        {
+          "question": "What pickup and delivery coverage does Amazon Shipping offer?",
+          "answer": "Amazon Shipping offers ground shipping service across the 48 contiguous US states, with reliable transit times to approximately 95% of the US population. Pickup areas are expanding daily."
+        }
+      ]
+    },
+    {
+      "name": "Purchasing Labels",
+      "items": [
+        {
+          "question": "How can I buy shipping labels from Amazon Shipping?",
+          "answer": "You can purchase labels through our web portal, Amazon Shipping API, or integrated third-party software partners like ShipStation, EasyPost, and others."
+        },
+        {
+          "question": "How long is a shipping label valid after it's created?",
+          "answer": "Shipping labels are typically valid for 30 days from the date of creation. After this period, you will need to void the label and create a new one."
+        }
+      ]
+    },
+    {
+      "name": "Package Collection",
+      "items": [
+        {
+          "question": "How does Amazon Shipping collect my shipments?",
+          "answer": "Amazon Shipping provides scheduled pickup services from your warehouse or fulfillment center. You can schedule pickups through our portal or API."
+        },
+        {
+          "question": "Can I drop off my package instead of scheduling a pickup?",
+          "answer": "Currently, Amazon Shipping primarily operates through scheduled pickups. Please contact our support team to discuss alternative arrangements."
+        },
+        {
+          "question": "How can I track and manage my pickup schedule?",
+          "answer": "You can view and manage your pickup schedule through the Amazon Shipping portal or via API integration. Changes can typically be made up to 24 hours before the scheduled pickup."
+        }
+      ]
+    },
+    {
+      "name": "Tracking",
+      "items": [
+        {
+          "question": "How can I track my shipments with Amazon Shipping?",
+          "answer": "You can track shipments using our online tracking tool at track.amazon.com, through the Amazon Shipping portal, or via API. Simply enter your tracking ID to see real-time updates."
+        },
+        {
+          "question": "Can my recipients track packages shipped through Amazon Shipping?",
+          "answer": "Yes, recipients can track their packages using the tracking ID at track.amazon.com. They'll see the same real-time updates available to shippers."
+        },
+        {
+          "question": "Does Amazon Shipping provide proof of delivery?",
+          "answer": "Yes, Amazon Shipping provides photo on delivery where available, along with delivery confirmation timestamps and recipient signatures when required."
+        }
+      ]
+    },
+    {
+      "name": "Claims and Support",
+      "items": [
+        {
+          "question": "How do I file a claim for a lost or damaged package?",
+          "answer": "Claims can be filed through the Amazon Shipping portal or by contacting our support team. Please have your tracking ID and documentation ready. Claims must be filed within 60 days of the shipment date."
+        },
+        {
+          "question": "What support options are available?",
+          "answer": "Amazon Shipping offers dedicated support via email, chat, and callback options, available seven days a week. Enterprise customers have access to dedicated account managers."
+        }
+      ]
+    }
+  ]
+}
