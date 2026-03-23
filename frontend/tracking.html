@@ -313,7 +313,7 @@ async function loadTrackingData(trackingId, silent = false) {
       return;
     }
 
-    const shipment = json.data;
+    const shipment = json.data[0];
 
     const steps = [
       "Shipment Created",
