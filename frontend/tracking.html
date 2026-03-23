@@ -298,7 +298,11 @@ async function loadTrackingData(trackingId, silent = false) {
   }
 
   try {
-    const res = await fetch(`http://localhost:5000/api/shipments/track/${trackingId}`);
+   const res = await fetch(`https://shipping-backendee.onrender.com/api/shipments/track/${trackingId}`);
+
+   if (!res.ok) {
+  throw new Error("Network response was not ok");
+}
     const json = await res.json();
 
     if (!res.ok || !json.success) {
