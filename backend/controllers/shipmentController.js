@@ -28,9 +28,9 @@ exports.trackShipment = async (req, res) => {
     const { trackingId } = req.params;
     
     const shipment = await Shipment.findOne({
-    trackingId: { $regex: `^${String(trackingId).trim()}$`, $options: 'i' }
+      trackingId: { $regex: `^${String(trackingId).trim()}$`, $options: 'i' }
     });
-    
+
     if (!shipment) {
       return res.status(404).json({
         success: false,
