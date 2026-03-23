@@ -301,19 +301,20 @@ async function loadTrackingData(trackingId, silent = false) {
   try {
    const res = await fetch('https://shipping-backendee.onrender.com/api/shipments/track/TRKXYZ789ABC');
 
-    const json = await res.json();
+   const json = await res.json();
 
-    if (!res.ok || !json.success) {
+   // FIX: handle array response
+     const shipment = json.data && json.data.length ? json.data[0] : null;
+
+     if (!res.ok || !json.success || !shipment) {
       resultsContent.innerHTML = `
-        <div style="max-width:900px;margin:30px auto;background:#fff;border-radius:18px;padding:28px;box-shadow:0 10px 30px rgba(0,0,0,0.08);">
-          <h3 style="margin:0 0 10px;">Tracking unavailable</h3>
-          <p style="margin:0;color:#6b7280;">${json.message || "Shipment not found."}</p>
-        </div>
-      `;
-      return;
-    }
-
-    const shipment = json.data[0];
+      <div style="max-width:900px;margin:30px auto;background:#fff;border-radius:18px;padding:28px;">
+       <h3 style="margin:0 0 10px;">Tracking unavailable</h3>
+       <p style="margin:0;color:#6b7280;">${json.message || "Shipment not found."}</p>
+    </div>
+  `;
+  return;
+}
 
     const steps = [
       "Shipment Created",
