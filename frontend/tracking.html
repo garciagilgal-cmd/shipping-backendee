@@ -299,7 +299,7 @@ async function loadTrackingData(trackingId, silent = false) {
   }
 
   try {
-   const res = await fetch(`https://shipping-backendee.onrender.com/api/shipments/track/${trackingId}`);
+   const res = await fetch('https://shipping-backendee.onrender.com/api/shipments/track/TRKXYZ789ABC');
 
     const json = await res.json();
 
