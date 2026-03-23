@@ -288,6 +288,7 @@ document.getElementById('tracking-form').addEventListener('submit', async functi
 });
 
 async function loadTrackingData(trackingId, silent = false) {
+  trackingId = String(trackingId).trim().toUpperCase();
   const resultsSection = document.getElementById('tracking-results');
   const resultsContent = document.querySelector('.tracking-results-content');
 
@@ -299,7 +300,7 @@ async function loadTrackingData(trackingId, silent = false) {
 
   try {
    const res = await fetch(`https://shipping-backendee.onrender.com/api/shipments/track/${trackingId}`);
-   
+
     const json = await res.json();
 
     if (!res.ok || !json.success) {
