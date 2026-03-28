@@ -299,20 +299,46 @@ async function loadTrackingData(trackingId, silent = false) {
   }
 
   try {
-   const res = await fetch(`https://shipping-backendee.onrender.com/api/shipments/track/${trackingId}`);
+  const input = document.querySelector('input');
+  const id = trackingId || input.value.trim();
 
-   const json = await res.json();
-   
-     const shipment = Array.isArray(json.data) ? json.data[0] : json.data;
+  if (!id) {
+    resultsContent.innerHTML = `<p>Please enter a tracking ID</p>`;
+    return;
+  }
+  try {
+  const res = await fetch(`https://shipping-backende.onrender.com/api/shipments/track/${id}`);
 
-     if (!json.success || !shipment) {
-      resultsContent.innerHTML = `
-      <div style="max-width:900px;margin:30px auto;background:#fff;border-radius:18px;padding:28px;">
-       <h3 style="margin:0 0 10px;">Tracking unavailable</h3>
-       <p style="margin:0;color:#6b7280;">${json.message || "Shipment not found."}</p>
-    </div>
+  const json = await res.json();
+
+  // ✅ SAFE extraction
+  let shipment = null;
+  if (Array.isArray(json.data)) {
+    shipment = json.data[0];
+  } else {
+    shipment = json.data;
+  }
+
+  // ✅ FIXED condition
+  if (!json.success || !shipment) {
+    resultsContent.innerHTML = `
+      <div>
+        <h3>Tracking unavailable</h3>
+        <p>${json.message || "Shipment not found"}</p>
+      </div>
+    `;
+    return;
+  }
+
+  // ✅ TEMP DEBUG OUTPUT (IMPORTANT)
+  resultsContent.innerHTML = `
+    <pre>${JSON.stringify(shipment, null, 2)}</pre>
   `;
-  return;
+
+} catch (error) {
+  resultsContent.innerHTML = `
+    <p>Server error. Make sure backend is running.</p>
+  `;
 }
 
     const steps = [
@@ -1231,11 +1257,11 @@ async function loadTrackingData(trackingId, silent = false) {
         </div>
       </div>
     `;
-  } catch (err) {
+    } catch (err) {
     console.error(err);
     resultsContent.innerHTML = `<p>Server error. Make sure backend is running.</p>`;
+    }
   }
-}
 </script>
 <div id="joviChatWidget" class="jovi-chat-widget">
   <button id="joviChatToggle" class="jovi-chat-toggle" aria-label="Open JoviChat">
