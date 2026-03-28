@@ -302,11 +302,10 @@ async function loadTrackingData(trackingId, silent = false) {
    const res = await fetch(`https://shipping-backendee.onrender.com/api/shipments/track/${trackingId}`);
 
    const json = await res.json();
+   
+     const shipment = json.data;
 
-   // FIX: handle array response
-     const shipment = json.data && json.data.length ? json.data[0] : null;
-
-     if (!res.ok || !json.success || !shipment) {
+     if (!json.success || !shipment) {
       resultsContent.innerHTML = `
       <div style="max-width:900px;margin:30px auto;background:#fff;border-radius:18px;padding:28px;">
        <h3 style="margin:0 0 10px;">Tracking unavailable</h3>
