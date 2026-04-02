@@ -38,7 +38,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
           Sign in
         </a>
-        <a href="get-started.html" class="header-btn header-btn-primary">Create account</a>
+        <a href="get-started.html" class="header-btn header-btn-primary"><span data-i18n="common.createAccount">Create account</span></a>
       </div>
     </div>
   </header>
@@ -54,17 +54,17 @@
       <div class="container">
         <div class="tracking-hero-content">
           <h1 class="tracking-hero-title">
-            <span class="tracking-hero-title-accent">Amazon Shipping</span><br>
-            package delivery.
+            <span class="tracking-hero-title-accent" data-i18n="tracking.heroTitleAccent">Amazon Shipping</span><br>
+            <span data-i18n="tracking.heroTitleSuffix">package delivery.</span>
           </h1>
-          <p class="tracking-hero-subtitle">Enter your tracking ID to follow your package's journey from a seller to your door.</p>
+          <p class="tracking-hero-subtitle" data-i18n="tracking.heroSubtitle">Enter your tracking ID to follow your package's journey from a seller to your door.</p>
           
           <form class="tracking-form-large" id="tracking-form">
             <div class="tracking-input-large-wrapper">
               <svg class="tracking-input-large-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               <input type="text" class="tracking-input-large" placeholder="Enter tracking ID" aria-label="Tracking ID" required>
             </div>
-            <button type="submit" class="tracking-btn-large">Track</button>
+            <button type="submit" class="tracking-btn-large"><span data-i18n="tracking.trackButton">Track</span></button>
           </form>
         </div>
       </div>
@@ -268,17 +268,21 @@
   <script>
 let trackingAutoRefresh = null;
 
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, function(ch) {
+    return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch];
+  });
+}
+
 document.getElementById('tracking-form').addEventListener('submit', async function(e) {
   e.preventDefault();
 
   const input = document.querySelector('.tracking-input-large');
-  const trackingId = input.value.trim();
+  const trackingId = (input.value || '').trim().toUpperCase();
 
   if (!trackingId) return;
 
-  if (trackingAutoRefresh) {
-    clearInterval(trackingAutoRefresh);
-  }
+  if (trackingAutoRefresh) clearInterval(trackingAutoRefresh);
 
   await loadTrackingData(trackingId);
 
@@ -288,73 +292,50 @@ document.getElementById('tracking-form').addEventListener('submit', async functi
 });
 
 async function loadTrackingData(trackingId, silent = false) {
-  trackingId = String(trackingId).trim().toUpperCase();
+  const id = String(trackingId || '').trim().toUpperCase();
   const resultsSection = document.getElementById('tracking-results');
   const resultsContent = document.querySelector('.tracking-results-content');
 
-  resultsSection.style.display = "block";
+  if (!id) {
+    resultsSection.style.display = 'block';
+    resultsContent.innerHTML = '<p>Please enter a tracking ID.</p>';
+    return;
+  }
+
+  resultsSection.style.display = 'block';
 
   if (!silent) {
     resultsContent.innerHTML = `<div style="padding:30px;font-size:18px;">Loading tracking details...</div>`;
   }
 
   try {
-  const input = document.querySelector('input');
-  const id = trackingId || input.value.trim();
+    const res = await fetch(`https://shipping-backendee.onrender.com/api/shipments/track/${encodeURIComponent(id)}`);
+    const json = await res.json();
+    const shipment = json.data;
 
-  if (!id) {
-    resultsContent.innerHTML = `<p>Please enter a tracking ID</p>`;
-    return;
-  }
-  try {
-  const res = await fetch(`https://shipping-backende.onrender.com/api/shipments/track/${id}`);
-
-  const json = await res.json();
-
-  // ✅ SAFE extraction
-  let shipment = null;
-  if (Array.isArray(json.data)) {
-    shipment = json.data[0];
-  } else {
-    shipment = json.data;
-  }
-
-  // ✅ FIXED condition
-  if (!json.success || !shipment) {
-    resultsContent.innerHTML = `
-      <div>
-        <h3>Tracking unavailable</h3>
-        <p>${json.message || "Shipment not found"}</p>
-      </div>
-    `;
-    return;
-  }
-
-  // ✅ TEMP DEBUG OUTPUT (IMPORTANT)
-  resultsContent.innerHTML = `
-    <pre>${JSON.stringify(shipment, null, 2)}</pre>
-  `;
-
-} catch (error) {
-  resultsContent.innerHTML = `
-    <p>Server error. Make sure backend is running.</p>
-  `;
-}
+    if (!json.success || !shipment) {
+      resultsContent.innerHTML = `
+        <div style="max-width:900px;margin:30px auto;background:#fff;border-radius:18px;padding:28px;">
+          <h3 style="margin:0 0 10px;">Tracking unavailable</h3>
+          <p style="margin:0;color:#6b7280;">${escapeHtml(json.message || 'Shipment not found.')}</p>
+        </div>
+      `;
+      return;
+    }
 
     const steps = [
-      "Shipment Created",
-      "Picked Up",
-      "At Origin Facility",
-      "In Transit",
-      "Customs Clearance",
-      "Out for Delivery",
-      "Delivered"
+      'Shipment Created',
+      'Picked Up',
+      'At Origin Facility',
+      'In Transit',
+      'Customs Clearance',
+      'Out for Delivery',
+      'Delivered'
     ];
 
-    const normalizedStatus =
-      shipment.currentStatus === "At Customs"
-        ? "Customs Clearance"
-        : (shipment.currentStatus || "Shipment Created");
+    const normalizedStatus = shipment.currentStatus === 'At Customs'
+      ? 'Customs Clearance'
+      : (shipment.currentStatus || 'Shipment Created');
 
     let currentStep = steps.indexOf(normalizedStatus);
     if (currentStep < 0) currentStep = 0;
@@ -362,906 +343,157 @@ async function loadTrackingData(trackingId, silent = false) {
     const progressPercent = ((currentStep + 1) / steps.length) * 100;
 
     const customsStatusesRequiringAttention = [
-      "Awaiting Customs Review",
-      "Under Customs Inspection",
-      "Customs Processing",
-      "Held at Customs"
+      'Awaiting Customs Review',
+      'Under Customs Inspection',
+      'Customs Processing',
+      'Held at Customs'
     ];
 
     const showCustomsNotice =
-      normalizedStatus === "Customs Clearance" ||
+      normalizedStatus === 'Customs Clearance' ||
       customsStatusesRequiringAttention.includes(shipment.customsStatus);
 
     const timelineHtml = (shipment.timelineHistory || []).map(item => `
       <div class="timeline-item">
         <div class="timeline-dot"></div>
-        <div class="timeline-date">${item.date || ""} ${item.time || ""}</div>
-        <div class="timeline-status">${item.status || ""}</div>
-        <div class="timeline-location">${item.location || ""}</div>
-        <div class="timeline-note">${item.note || ""}</div>
+        <div class="timeline-date">${escapeHtml(item.date || '')} ${escapeHtml(item.time || '')}</div>
+        <div class="timeline-status">${escapeHtml(item.status || '')}</div>
+        <div class="timeline-location">${escapeHtml(item.location || '')}</div>
+        <div class="timeline-note">${escapeHtml(item.note || '')}</div>
       </div>
-    `).join("");
+    `).join('');
 
     const stepsHtml = steps.map((step, index) => `
       <div class="shipping-step ${index <= currentStep ? 'active' : ''}">
         <div class="shipping-step-dot"></div>
-        ${step}
+        ${escapeHtml(step)}
       </div>
-    `).join("");
+    `).join('');
 
     resultsContent.innerHTML = `
       <style>
-        .advanced-tracking-wrap {
-          max-width: 1180px;
-          margin: 30px auto;
-          font-family: Arial, sans-serif;
-          color: #111827;
-        }
-
-        .track-top-card,
-        .track-progress-card,
-        .track-route-card,
-        .track-map-card,
-        .track-timeline-card,
-        .customs-card {
-          background: #ffffff;
-          border-radius: 18px;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-          padding: 24px;
-          margin-bottom: 24px;
-        }
-
-        .track-header-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          gap: 20px;
-          flex-wrap: wrap;
-        }
-
-        .track-badge {
-          display: inline-block;
-          background: linear-gradient(135deg, #007bff, #00c6ff);
-          color: white;
-          padding: 10px 18px;
-          border-radius: 999px;
-          font-weight: 700;
-          font-size: 14px;
-          box-shadow: 0 8px 18px rgba(0,123,255,0.25);
-        }
-
-        .track-title {
-          margin: 0 0 8px;
-          font-size: 32px;
-        }
-
-        .track-sub {
-          color: #6b7280;
-          margin: 0;
-        }
-
-        .track-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-          gap: 16px;
-          margin-top: 22px;
-        }
-
-        .track-box {
-          background: #f8fafc;
-          border-radius: 14px;
-          padding: 16px;
-          border: 1px solid #e5e7eb;
-        }
-
-        .track-box-label {
-          display: block;
-          font-size: 13px;
-          color: #6b7280;
-          margin-bottom: 6px;
-        }
-
-        .track-box-value {
-          font-size: 18px;
-          font-weight: 700;
-          color: #111827;
-        }
-
-        .delivery-progress-wrap {
-          margin-top: 26px;
-        }
-
-        .delivery-progress-line {
-          position: relative;
-          height: 12px;
-          background: #e5e7eb;
-          border-radius: 999px;
-          overflow: hidden;
-        }
-
-        .delivery-progress-fill {
-          height: 100%;
-          width: ${progressPercent}%;
-          background: linear-gradient(90deg, #007bff, #00c6ff);
-          border-radius: 999px;
-          transition: width 1s ease;
-        }
-
-        .delivery-moving-pin {
-          position: absolute;
-          top: 50%;
-          left: ${progressPercent}%;
-          transform: translate(-50%, -50%);
-          font-size: 20px;
-          animation: bouncePin 1.4s infinite;
-        }
-
-        @keyframes bouncePin {
-          0%, 100% { transform: translate(-50%, -50%); }
-          50% { transform: translate(-50%, -72%); }
-        }
-
-        .shipping-steps {
-          display: grid;
-          grid-template-columns: repeat(7, 1fr);
-          gap: 8px;
-          margin-top: 18px;
-        }
-
-        .shipping-step {
-          text-align: center;
-          font-size: 12px;
-          color: #6b7280;
-          font-weight: 700;
-        }
-
-        .shipping-step-dot {
-          width: 18px;
-          height: 18px;
-          margin: 0 auto 8px;
-          border-radius: 50%;
-          background: #d1d5db;
-          transition: all 0.3s ease;
-        }
-
-        .shipping-step.active .shipping-step-dot {
-          background: #007bff;
-          box-shadow: 0 0 0 8px rgba(0,123,255,0.12);
-        }
-
-        .auto-update-note {
-          margin-top: 12px;
-          color: #6b7280;
-          font-size: 13px;
-        }
-
-        .route-line-wrap {
-          position: relative;
-          margin-top: 18px;
-          padding-top: 36px;
-          padding-bottom: 40px;
-        }
-
-        .route-line-main {
-          position: relative;
-          height: 8px;
-          background: #dbeafe;
-          border-radius: 999px;
-          overflow: hidden;
-        }
-
-        .route-line-fill {
-          width: ${progressPercent}%;
-          height: 100%;
-          background: linear-gradient(90deg, #007bff, #00c6ff);
-          border-radius: 999px;
-          transition: width 1s ease;
-        }
-
-        .route-plane {
-          position: absolute;
-          top: 8px;
-          left: ${progressPercent}%;
-          transform: translateX(-50%);
-          font-size: 26px;
-          animation: planeHop 1.8s infinite ease-in-out;
-        }
-
-        @keyframes planeHop {
-          0%, 100% { transform: translateX(-50%) translateY(0) rotate(-8deg); }
-          50% { transform: translateX(-50%) translateY(-8px) rotate(-2deg); }
-        }
-
-        .route-stops {
-          display: flex;
-          justify-content: space-between;
-          gap: 12px;
-          margin-top: 18px;
-          flex-wrap: wrap;
-        }
-
-        .route-stop {
-          flex: 1;
-          min-width: 170px;
-          background: #f8fafc;
-          border: 1px solid #e5e7eb;
-          border-radius: 14px;
-          padding: 14px;
-        }
-
-        .route-stop small {
-          display: block;
-          color: #6b7280;
-          margin-bottom: 6px;
-        }
-
-        .route-stop strong {
-          display: block;
-          color: #111827;
-          font-size: 16px;
-        }
-
-        .world-map-card {
-          display: grid;
-          grid-template-columns: 420px 1fr;
-          gap: 28px;
-          align-items: center;
-        }
-
-        .world-map-left {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-        }
-
-        .globe-wrap {
-          position: relative;
-          width: 320px;
-          height: 320px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .globe {
-          position: relative;
-          width: 220px;
-          height: 220px;
-          border-radius: 50%;
-          background:
-            radial-gradient(circle at 35% 30%, #8fd3ff 0%, #4fa9ff 35%, #1e5fbf 70%, #163f84 100%);
-          box-shadow:
-            inset -25px -30px 40px rgba(0,0,0,0.18),
-            inset 15px 18px 30px rgba(255,255,255,0.12),
-            0 20px 50px rgba(0, 89, 255, 0.25);
-          overflow: hidden;
-        }
-
-        .globe::after {
-          content: "";
-          position: absolute;
-          inset: 0;
-          border-radius: 50%;
-          background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.28), transparent 35%);
-        }
-
-        .globe-grid {
-          position: absolute;
-          inset: 0;
-          border-radius: 50%;
-          border: 1px solid rgba(255,255,255,0.15);
-        }
-
-        .globe-grid-1::before,
-        .globe-grid-2::before,
-        .globe-grid-3::before {
-          content: "";
-          position: absolute;
-          left: 50%;
-          top: 0;
-          transform: translateX(-50%);
-          width: 1px;
-          height: 100%;
-          background: rgba(255,255,255,0.14);
-        }
-
-        .globe-grid-1::after,
-        .globe-grid-2::after,
-        .globe-grid-3::after {
-          content: "";
-          position: absolute;
-          top: 50%;
-          left: 0;
-          transform: translateY(-50%);
-          width: 100%;
-          height: 1px;
-          background: rgba(255,255,255,0.14);
-        }
-
-        .globe-grid-2 { transform: scaleX(0.7); }
-        .globe-grid-3 { transform: scaleY(0.7); }
-
-        .continent {
-          position: absolute;
-          background: linear-gradient(135deg, #8bc34a, #4caf50);
-          opacity: 0.95;
-          filter: drop-shadow(0 2px 2px rgba(0,0,0,0.08));
-        }
-
-        .continent-1 {
-          width: 70px;
-          height: 38px;
-          top: 58px;
-          left: 48px;
-          border-radius: 45% 55% 40% 60% / 50% 40% 60% 50%;
-          transform: rotate(-10deg);
-        }
-
-        .continent-2 {
-          width: 48px;
-          height: 62px;
-          top: 96px;
-          left: 78px;
-          border-radius: 50% 35% 48% 52% / 40% 42% 58% 60%;
-          transform: rotate(8deg);
-        }
-
-        .continent-3 {
-          width: 64px;
-          height: 34px;
-          top: 78px;
-          left: 138px;
-          border-radius: 55% 45% 60% 40% / 50% 50% 50% 50%;
-          transform: rotate(12deg);
-        }
-
-        .continent-4 {
-          width: 46px;
-          height: 24px;
-          top: 138px;
-          left: 150px;
-          border-radius: 50%;
-          transform: rotate(-8deg);
-        }
-
-        .orbit-ring {
-          position: absolute;
-          border: 2px dashed rgba(0,123,255,0.22);
-          border-radius: 50%;
-        }
-
-        .orbit-ring-1 {
-          width: 290px;
-          height: 290px;
-          animation: orbitRotate 18s linear infinite;
-        }
-
-        .orbit-ring-2 {
-          width: 340px;
-          height: 200px;
-          animation: orbitRotateReverse 22s linear infinite;
-        }
-
-        .orbit-plane {
-          position: absolute;
-          top: -12px;
-          left: 50%;
-          transform: translateX(-50%);
-          font-size: 28px;
-          filter: drop-shadow(0 6px 10px rgba(0,0,0,0.16));
-        }
-
-        .orbit-label {
-          position: absolute;
-          background: #ffffff;
-          border: 1px solid #dbeafe;
-          box-shadow: 0 8px 18px rgba(0,0,0,0.08);
-          border-radius: 14px;
-          padding: 10px 14px;
-          font-size: 12px;
-          font-weight: 700;
-          color: #1f2937;
-          max-width: 140px;
-          text-align: center;
-        }
-
-        .orbit-label small {
-          display: block;
-          margin-top: 4px;
-          color: #6b7280;
-          font-weight: 600;
-          font-size: 11px;
-        }
-
-        .label-origin {
-          left: -6px;
-          top: 24px;
-        }
-
-        .label-current {
-          right: -6px;
-          top: 40px;
-        }
-
-        .label-destination {
-          left: 50%;
-          transform: translateX(-50%);
-          bottom: -6px;
-        }
-
-        @keyframes orbitRotate {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-
-        @keyframes orbitRotateReverse {
-          from { transform: rotate(360deg); }
-          to { transform: rotate(0deg); }
-        }
-
-        .map-side-info {
-          display: grid;
-          gap: 16px;
-        }
-
-        .map-info-card {
-          background: #f8fafc;
-          border: 1px solid #e5e7eb;
-          border-radius: 14px;
-          padding: 16px;
-        }
-
-        .map-info-card h4 {
-          margin: 0 0 8px;
-          font-size: 18px;
-        }
-
-        .map-info-card p {
-          margin: 0;
-          color: #6b7280;
-          line-height: 1.6;
-        }
-
-        .customs-card {
-          border: 1px solid #fde68a;
-          background: linear-gradient(180deg, #fffdf5, #ffffff);
-        }
-
-        .customs-title {
-          margin: 0 0 10px;
-          font-size: 22px;
-        }
-
-        .customs-badge {
-          display: inline-block;
-          background: #fff7ed;
-          color: #b45309;
-          border: 1px solid #fcd34d;
-          padding: 8px 14px;
-          border-radius: 999px;
-          font-size: 13px;
-          font-weight: 700;
-          margin-bottom: 14px;
-        }
-
-        .customs-text {
-          color: #4b5563;
-          line-height: 1.7;
-          margin: 0 0 10px;
-        }
-
-        .customs-list {
-          margin: 12px 0 0;
-          padding-left: 18px;
-          color: #4b5563;
-          line-height: 1.7;
-        }
-
-        .customs-contact-box {
-          margin-top: 18px;
-          padding: 18px;
-          border-radius: 14px;
-          background: #fff7ed;
-          border: 1px solid #fed7aa;
-        }
-
-        .customs-contact-title {
-          margin: 0 0 8px;
-          font-size: 18px;
-          color: #9a3412;
-        }
-
-        .customs-contact-text {
-          margin: 0 0 10px;
-          color: #4b5563;
-          line-height: 1.6;
-        }
-
-        .customs-contact-email {
-          display: inline-block;
-          font-size: 18px;
-          font-weight: 700;
-          color: #c2410c;
-          text-decoration: none;
-          background: #ffffff;
-          border: 1px solid #fdba74;
-          border-radius: 12px;
-          padding: 12px 16px;
-          margin-bottom: 10px;
-        }
-
-        .customs-contact-email:hover {
-          background: #fffaf5;
-        }
-
-        .customs-contact-note {
-          margin: 8px 0 0;
-          color: #6b7280;
-          font-size: 13px;
-          line-height: 1.6;
-        }
-
-        .timeline-item {
-          position: relative;
-          padding-left: 28px;
-          margin-bottom: 22px;
-          border-left: 3px solid #dbeafe;
-          margin-left: 10px;
-        }
-
-        .timeline-dot {
-          position: absolute;
-          left: -10px;
-          top: 4px;
-          width: 16px;
-          height: 16px;
-          border-radius: 50%;
-          background: #007bff;
-        }
-
-        .timeline-date {
-          font-size: 13px;
-          color: #6b7280;
-          margin-bottom: 5px;
-        }
-
-        .timeline-status {
-          font-size: 19px;
-          font-weight: 700;
-          margin-bottom: 4px;
-        }
-
-        .timeline-location {
-          font-weight: 700;
-          margin-bottom: 4px;
-        }
-
-        .timeline-note {
-          color: #6b7280;
-        }
-
-        @media (max-width: 980px) {
-          .world-map-card {
-            grid-template-columns: 1fr;
-          }
-
-          .world-map-left {
-            order: 1;
-          }
-
-          .map-side-info {
-            order: 2;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .shipping-steps {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 14px;
-          }
-
-          .globe-wrap {
-            width: 280px;
-            height: 280px;
-          }
-
-          .globe {
-            width: 190px;
-            height: 190px;
-          }
-
-          .orbit-ring-1 {
-            width: 250px;
-            height: 250px;
-          }
-
-          .orbit-ring-2 {
-            width: 280px;
-            height: 170px;
-          }
-
-          .orbit-label {
-            max-width: 100px;
-            font-size: 11px;
-          }
-
-          .route-stops {
-            flex-direction: column;
-          }
-        }
+        .advanced-tracking-wrap { max-width:1180px; margin:30px auto; font-family:Arial,sans-serif; color:#111827; }
+        .track-top-card,.track-progress-card,.track-route-card,.track-map-card,.track-timeline-card,.customs-card { background:#fff; border-radius:18px; box-shadow:0 10px 30px rgba(0,0,0,0.08); padding:24px; margin-bottom:24px; }
+        .track-header-row { display:flex; justify-content:space-between; align-items:center; gap:20px; flex-wrap:wrap; }
+        .track-badge { display:inline-block; background:linear-gradient(135deg,#007bff,#00c6ff); color:#fff; padding:10px 18px; border-radius:999px; font-weight:700; font-size:14px; box-shadow:0 8px 18px rgba(0,123,255,0.25); }
+        .track-title { margin:0 0 8px; font-size:32px; }
+        .track-sub { color:#6b7280; margin:0; }
+        .track-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin-top:22px; }
+        .track-box { background:#f8fafc; border-radius:14px; padding:16px; border:1px solid #e5e7eb; }
+        .track-box-label { display:block; font-size:13px; color:#6b7280; margin-bottom:6px; }
+        .track-box-value { font-size:18px; font-weight:700; color:#111827; }
+        .delivery-progress-wrap { margin-top:26px; }
+        .delivery-progress-line { position:relative; height:12px; background:#e5e7eb; border-radius:999px; overflow:hidden; }
+        .delivery-progress-fill { height:100%; width:${progressPercent}%; background:linear-gradient(90deg,#007bff,#00c6ff); border-radius:999px; transition:width 1s ease; }
+        .delivery-moving-pin { position:absolute; top:50%; left:${progressPercent}%; transform:translate(-50%, -50%); font-size:20px; animation:bouncePin 1.4s infinite; }
+        @keyframes bouncePin { 0%,100%{transform:translate(-50%,-50%);} 50%{transform:translate(-50%,-72%);} }
+        .shipping-steps { display:grid; grid-template-columns:repeat(7,1fr); gap:8px; margin-top:18px; }
+        .shipping-step { text-align:center; font-size:12px; color:#6b7280; font-weight:700; }
+        .shipping-step-dot { width:18px; height:18px; margin:0 auto 8px; border-radius:50%; background:#d1d5db; transition:all .3s ease; }
+        .shipping-step.active .shipping-step-dot { background:#007bff; box-shadow:0 0 0 8px rgba(0,123,255,.12); }
+        .auto-update-note { margin-top:12px; color:#6b7280; font-size:13px; }
+        .world-map-card { display:grid; grid-template-columns:420px 1fr; gap:28px; align-items:center; }
+        .world-map-left { display:flex; justify-content:center; align-items:center; }
+        .globe-wrap { position:relative; width:320px; height:320px; display:flex; align-items:center; justify-content:center; }
+        .globe { position:relative; width:220px; height:220px; border-radius:50%; background:radial-gradient(circle at 35% 30%,#8fd3ff 0%,#4fa9ff 35%,#1e5fbf 70%,#163f84 100%); box-shadow:inset -25px -30px 40px rgba(0,0,0,.18), inset 15px 18px 30px rgba(255,255,255,.12), 0 20px 50px rgba(0,89,255,.25); overflow:hidden; }
+        .globe::after { content:''; position:absolute; inset:0; border-radius:50%; background:radial-gradient(circle at 30% 25%, rgba(255,255,255,.28), transparent 35%); }
+        .globe-grid { position:absolute; inset:0; border-radius:50%; border:1px solid rgba(255,255,255,.15); }
+        .globe-grid-1::before,.globe-grid-2::before,.globe-grid-3::before { content:''; position:absolute; left:50%; top:0; transform:translateX(-50%); width:1px; height:100%; background:rgba(255,255,255,.14); }
+        .globe-grid-1::after,.globe-grid-2::after,.globe-grid-3::after { content:''; position:absolute; top:50%; left:0; transform:translateY(-50%); width:100%; height:1px; background:rgba(255,255,255,.14); }
+        .globe-grid-2 { transform:scaleX(.7); }
+        .globe-grid-3 { transform:scaleY(.7); }
+        .continent { position:absolute; background:linear-gradient(135deg,#8bc34a,#4caf50); opacity:.95; filter:drop-shadow(0 2px 2px rgba(0,0,0,.08)); }
+        .continent-1 { width:70px; height:38px; top:58px; left:48px; border-radius:45% 55% 40% 60% / 50% 40% 60% 50%; transform:rotate(-10deg); }
+        .continent-2 { width:48px; height:62px; top:96px; left:78px; border-radius:50% 35% 48% 52% / 40% 42% 58% 60%; transform:rotate(8deg); }
+        .continent-3 { width:64px; height:34px; top:78px; left:138px; border-radius:55% 45% 60% 40% / 50% 50% 50% 50%; transform:rotate(12deg); }
+        .continent-4 { width:46px; height:24px; top:138px; left:150px; border-radius:50%; transform:rotate(-8deg); }
+        .orbit-ring { position:absolute; border:2px dashed rgba(0,123,255,.22); border-radius:50%; }
+        .orbit-ring-1 { width:290px; height:290px; animation:orbitRotate 18s linear infinite; }
+        .orbit-ring-2 { width:340px; height:200px; animation:orbitRotateReverse 22s linear infinite; }
+        .orbit-plane { position:absolute; top:-12px; left:50%; transform:translateX(-50%); font-size:28px; filter:drop-shadow(0 6px 10px rgba(0,0,0,.16)); }
+        .orbit-label { position:absolute; background:#fff; border:1px solid #dbeafe; box-shadow:0 8px 18px rgba(0,0,0,.08); border-radius:14px; padding:10px 14px; font-size:12px; font-weight:700; color:#1f2937; max-width:140px; text-align:center; }
+        .orbit-label small { display:block; margin-top:4px; color:#6b7280; font-weight:600; font-size:11px; }
+        .label-origin { left:-6px; top:24px; }
+        .label-current { right:-6px; top:40px; }
+        .label-destination { left:50%; transform:translateX(-50%); bottom:-6px; }
+        @keyframes orbitRotate { from { transform:rotate(0deg); } to { transform:rotate(360deg); } }
+        @keyframes orbitRotateReverse { from { transform:rotate(360deg); } to { transform:rotate(0deg); } }
+        .map-side-info { display:grid; gap:16px; }
+        .map-info-card { background:#f8fafc; border:1px solid #e5e7eb; border-radius:14px; padding:16px; }
+        .map-info-card h4 { margin:0 0 8px; font-size:18px; }
+        .map-info-card p { margin:0; color:#6b7280; line-height:1.6; }
+        .customs-card { border:1px solid #fde68a; background:linear-gradient(180deg,#fffdf5,#ffffff); }
+        .customs-title { margin:0 0 10px; font-size:22px; }
+        .customs-badge { display:inline-block; background:#fff7ed; color:#b45309; border:1px solid #fcd34d; padding:8px 14px; border-radius:999px; font-size:13px; font-weight:700; margin-bottom:14px; }
+        .customs-text { color:#4b5563; line-height:1.7; margin:0 0 10px; }
+        .timeline-item { position:relative; padding-left:28px; margin-bottom:22px; border-left:3px solid #dbeafe; margin-left:10px; }
+        .timeline-dot { position:absolute; left:-10px; top:4px; width:16px; height:16px; border-radius:50%; background:#007bff; }
+        .timeline-date { font-size:13px; color:#6b7280; margin-bottom:5px; }
+        .timeline-status { font-size:19px; font-weight:700; margin-bottom:4px; }
+        .timeline-location { font-weight:700; margin-bottom:4px; }
+        .timeline-note { color:#6b7280; }
+        @media (max-width:980px){ .world-map-card{grid-template-columns:1fr;} .world-map-left{order:1;} .map-side-info{order:2;} }
+        @media (max-width:768px){ .shipping-steps{grid-template-columns:repeat(2,1fr);gap:14px;} .globe-wrap{width:280px;height:280px;} .globe{width:190px;height:190px;} .orbit-ring-1{width:250px;height:250px;} .orbit-ring-2{width:280px;height:170px;} .orbit-label{max-width:100px;font-size:11px;} }
       </style>
-
       <div class="advanced-tracking-wrap">
         <div class="track-top-card">
           <div class="track-header-row">
             <div>
-              <h2 class="track-title">Tracking Result</h2>
-              <p class="track-sub">Your shipment is moving through the delivery network.</p>
+              <h2 class="track-title" data-i18n="tracking.resultTitle">Tracking Result</h2>
+              <p class="track-sub" data-i18n="tracking.resultSub">Your shipment is moving through the delivery network.</p>
             </div>
-            <div class="track-badge">✈️ ${shipment.currentStatus || "Tracking Active"}</div>
+            <div class="track-badge">✈️ ${escapeHtml(shipment.currentStatus || 'Tracking Active')}</div>
           </div>
-
           <div class="track-grid">
-            <div class="track-box">
-              <span class="track-box-label">Tracking ID</span>
-              <div class="track-box-value">${shipment.trackingId || ""}</div>
-            </div>
-            <div class="track-box">
-              <span class="track-box-label">Goods</span>
-              <div class="track-box-value">${shipment.goodsName || ""}</div>
-            </div>
-            <div class="track-box">
-              <span class="track-box-label">Goods Type</span>
-              <div class="track-box-value">${shipment.goodsType || ""}</div>
-            </div>
-            <div class="track-box">
-              <span class="track-box-label">Current Location</span>
-              <div class="track-box-value">${shipment.currentLocation || ""}</div>
-            </div>
-            <div class="track-box">
-              <span class="track-box-label">Origin</span>
-              <div class="track-box-value">${shipment.origin || ""}</div>
-            </div>
-            <div class="track-box">
-              <span class="track-box-label">Destination</span>
-              <div class="track-box-value">${shipment.destination || ""}</div>
-            </div>
-            <div class="track-box">
-              <span class="track-box-label">Customs Status</span>
-              <div class="track-box-value">${shipment.customsStatus || ""}</div>
-            </div>
-            <div class="track-box">
-              <span class="track-box-label">Estimated Delivery</span>
-              <div class="track-box-value">${shipment.estimatedDeliveryDate || ""}</div>
-            </div>
+            <div class="track-box"><span class="track-box-label">Tracking ID</span><div class="track-box-value">${escapeHtml(shipment.trackingId || '')}</div></div>
+            <div class="track-box"><span class="track-box-label">Goods</span><div class="track-box-value">${escapeHtml(shipment.goodsName || '')}</div></div>
+            <div class="track-box"><span class="track-box-label">Goods Type</span><div class="track-box-value">${escapeHtml(shipment.goodsType || '')}</div></div>
+            <div class="track-box"><span class="track-box-label">Current Location</span><div class="track-box-value">${escapeHtml(shipment.currentLocation || '')}</div></div>
+            <div class="track-box"><span class="track-box-label">Origin</span><div class="track-box-value">${escapeHtml(shipment.origin || '')}</div></div>
+            <div class="track-box"><span class="track-box-label">Destination</span><div class="track-box-value">${escapeHtml(shipment.destination || '')}</div></div>
+            <div class="track-box"><span class="track-box-label">Customs Status</span><div class="track-box-value">${escapeHtml(shipment.customsStatus || '')}</div></div>
+            <div class="track-box"><span class="track-box-label">Estimated Delivery</span><div class="track-box-value">${escapeHtml(shipment.estimatedDeliveryDate || '')}</div></div>
           </div>
         </div>
-
         <div class="track-progress-card">
-          <h3>Current Shipping progress</h3>
-
-          <div class="delivery-progress-wrap">
-            <div class="delivery-progress-line">
-              <div class="delivery-progress-fill"></div>
-              <div class="delivery-moving-pin">📍</div>
-            </div>
-          </div>
-
-          <div class="shipping-steps">
-            ${stepsHtml}
-          </div>
-
-          <div class="auto-update-note">
-            Auto-updating tracking status every 30 seconds.
-          </div>
+          <h3 data-i18n="tracking.progressTitle">Current Shipping progress</h3>
+          <div class="delivery-progress-wrap"><div class="delivery-progress-line"><div class="delivery-progress-fill"></div><div class="delivery-moving-pin">📍</div></div></div>
+          <div class="shipping-steps">${stepsHtml}</div>
+          <div class="auto-update-note" data-i18n="tracking.autoUpdate">Auto-updating tracking status every 30 seconds.</div>
         </div>
-
         <div class="track-map-card">
-          <h3>Live Global Air Route</h3>
+          <h3 data-i18n="tracking.mapTitle">Live Global Air Route</h3>
           <div class="world-map-card">
             <div class="world-map-left">
-              <div class="globe-wrap">
-                <div class="globe">
-                  <div class="globe-grid globe-grid-1"></div>
-                  <div class="globe-grid globe-grid-2"></div>
-                  <div class="globe-grid globe-grid-3"></div>
-                  <div class="continent continent-1"></div>
-                  <div class="continent continent-2"></div>
-                  <div class="continent continent-3"></div>
-                  <div class="continent continent-4"></div>
-                </div>
-
-                <div class="orbit-ring orbit-ring-1">
-                  <div class="orbit-plane">✈️</div>
-                </div>
-
-                <div class="orbit-ring orbit-ring-2"></div>
-
-                <div class="orbit-label label-origin">
-                  ${shipment.origin || "Origin"}
-                  <small>Departure</small>
-                </div>
-
-                <div class="orbit-label label-current">
-                  ${shipment.currentLocation || "Current"}
-                  <small>Current Position</small>
-                </div>
-
-                <div class="orbit-label label-destination">
-                  ${shipment.destination || "Destination"}
-                  <small>Arrival</small>
-                </div>
-              </div>
+              <div class="globe-wrap"><div class="globe"><div class="globe-grid globe-grid-1"></div><div class="globe-grid globe-grid-2"></div><div class="globe-grid globe-grid-3"></div><div class="continent continent-1"></div><div class="continent continent-2"></div><div class="continent continent-3"></div><div class="continent continent-4"></div></div><div class="orbit-ring orbit-ring-1"><div class="orbit-plane">✈️</div></div><div class="orbit-ring orbit-ring-2"></div><div class="orbit-label label-origin">${escapeHtml(shipment.origin || 'Origin')}<small>Departure</small></div><div class="orbit-label label-current">${escapeHtml(shipment.currentLocation || 'Current')}<small>Current Position</small></div><div class="orbit-label label-destination">${escapeHtml(shipment.destination || 'Destination')}<small>Arrival</small></div></div>
             </div>
-
             <div class="map-side-info">
-              <div class="map-info-card">
-                <h4>Air Route Progress</h4>
-                <p>
-                  This shipment is moving along an international air route. The aircraft indicator circles
-                  the world map to visually represent active movement toward the destination.
-                </p>
-              </div>
-
-              <div class="map-info-card">
-                <h4>Current Stage</h4>
-                <p>
-                  Current status: <strong>${shipment.currentStatus || ""}</strong><br>
-                  Current location: <strong>${shipment.currentLocation || ""}</strong><br>
-                  Delivery progress: <strong>${Math.round(progressPercent)}%</strong>
-                </p>
-              </div>
+              <div class="map-info-card"><h4 data-i18n="tracking.routeProgress">Air Route Progress</h4><p data-i18n="tracking.routeProgressText">This shipment is moving along an international air route. The aircraft indicator circles the world map to visually represent active movement toward the destination.</p></div>
+              <div class="map-info-card"><h4 data-i18n="tracking.currentStage">Current Stage</h4><p>Current status: <strong>${escapeHtml(shipment.currentStatus || '')}</strong><br>Current location: <strong>${escapeHtml(shipment.currentLocation || '')}</strong><br>Delivery progress: <strong>${Math.round(progressPercent)}%</strong></p></div>
             </div>
           </div>
         </div>
-
-        ${showCustomsNotice ? `
-        <div class="customs-card">
-          <div class="customs-badge">Customs Clearance Update</div>
-          <h3 class="customs-title">Customs Clearance Information</h3>
-          <p class="customs-text">
-            This shipment is currently going through customs processing. Depending on destination requirements,
-            the receiver will need to complete customs clearance steps and pay any applicable official customs
-            duties, taxes, or clearance charges before final release for delivery.
-          </p>
-          <p class="customs-text">
-            Clearance requirements vary by country and shipment type. Please monitor the shipment status and
-            ensure the recipient is ready to respond if customs payment is requested.
-          </p>
-
-         <style>
-.premium-support {
-  background: #ffffff;
-  padding: 22px;
-  border-radius: 18px;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
-  border: 1px solid #f1f5f9;
-  margin-top: 20px;
-}
-
-.contact-card {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 16px 18px;
-  border-radius: 14px;
-  text-decoration: none;
-  margin-bottom: 12px;
-  transition: 0.3s ease;
-}
-
-.contact-card:hover {
-  transform: translateY(-3px);
-}
-
-.contact-icon {
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  background: #fff;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-}
-
-.contact-text-wrap {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.contact-title {
-  font-weight: 700;
-}
-
-.contact-value {
-  font-size: 14px;
-}
-
-.email-card {
-  background: #fff7ed;
-  border: 1px solid #fed7aa;
-  color: #9a3412;
-}
-
-.whatsapp-card {
-  background: #ecfdf5;
-  border: 1px solid #86efac;
-  color: #065f46;
-}
-
-.contact-badge {
-  font-size: 12px;
-  padding: 6px 10px;
-  border-radius: 999px;
-  background: white;
-}
-
-.online::before {
-  content: "";
-  width: 8px;
-  height: 8px;
-  background: #22c55e;
-  border-radius: 50%;
-  display: inline-block;
-  margin-right: 6px;
-}
-
-.customs-contact-note {
-  font-size: 13px;
-  color: #666;
-}
-</style>
-
-<div class="premium-support">
-
-  <h4>Customs Clearance Support</h4>
-
-  <p>
-    For customs clearance assistance, required documents, or shipment guidance, contact:
-  </p>
-
-  <!-- EMAIL -->
-  <a href="mailto:custom@aaaashipping.com" class="contact-card email-card">
-    <span class="contact-icon">📧</span>
-    <span class="contact-text-wrap">
-      <span class="contact-title">Email Support</span>
-      <span class="contact-value">custom@aaaashipping.com</span>
-    </span>
-    <span class="contact-badge">Secure</span>
-  </a>
-
-  <!-- WHATSAPP -->
-  <a href="https://wa.me/234XXXXXXXXXX" target="_blank" class="contact-card whatsapp-card">
-    <span class="contact-icon">💬</span>
-    <span class="contact-text-wrap">
-      <span class="contact-title">WhatsApp</span>
-      <span class="contact-value">+234 XXX XXX XXXX</span>
-    </span>
-    <span class="contact-badge online">Online</span>
-  </a>
-
-  <p class="customs-contact-note">
-    Support can provide clearance guidance. Pay customs only through official channels.
-  </p>
-
-</div>
-        ` : ''}
-
+        ${showCustomsNotice ? `<div class="customs-card"><div class="customs-badge">Customs Clearance Update</div><h3 class="customs-title">Customs Clearance Information</h3><p class="customs-text">This shipment is currently going through customs processing. Depending on destination requirements, the receiver will need to complete customs clearance steps and pay any applicable official customs duties, taxes, or clearance charges before final release for delivery.</p><p class="customs-text">Clearance requirements vary by country and shipment type. Please monitor the shipment status and ensure the recipient is ready to respond if customs payment is requested.</p><div class="premium-support"><h4>Customs Clearance Support</h4><p>For customs clearance assistance, required documents, or shipment guidance, contact:</p><a href="mailto:custom@aaaashipping.com" class="contact-card email-card"><span class="contact-icon">📧</span><span class="contact-text-wrap"><span class="contact-title">Email Support</span><span class="contact-value">custom@aaaashipping.com</span></span><span class="contact-badge">Secure</span></a><a href="https://wa.me/234XXXXXXXXXX" target="_blank" class="contact-card whatsapp-card"><span class="contact-icon">💬</span><span class="contact-text-wrap"><span class="contact-title">WhatsApp</span><span class="contact-value">+234 XXX XXX XXXX</span></span><span class="contact-badge online">Online</span></a><p class="customs-contact-note">Support can provide clearance guidance. Pay customs only through official channels.</p></div></div>` : ''}
         <div class="track-timeline-card">
-          <h3>Detailed Shipment Timeline</h3>
+          <h3 data-i18n="tracking.timelineTitle">Detailed Shipment Timeline</h3>
           ${timelineHtml}
         </div>
       </div>
     `;
-    } catch (err) {
-    console.error(err);
-    resultsContent.innerHTML = `<p>Server error. Make sure backend is running.</p>`;
+
+    if (window.applyStoredLanguagePreferences) {
+      window.applyStoredLanguagePreferences();
     }
+  } catch (err) {
+    console.error(err);
+    resultsContent.innerHTML = `
+      <div style="max-width:900px;margin:30px auto;background:#fff;border-radius:18px;padding:28px;">
+        <h3 style="margin:0 0 10px;">Connection problem</h3>
+        <p style="margin:0;color:#6b7280;">${escapeHtml(err.message || 'The tracking service could not be reached right now. Please try again.')}</p>
+      </div>
+    `;
   }
+}
 </script>
 <div id="joviChatWidget" class="jovi-chat-widget">
   <button id="joviChatToggle" class="jovi-chat-toggle" aria-label="Open JoviChat">
