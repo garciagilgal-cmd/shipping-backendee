@@ -294,7 +294,7 @@ async function loadTrackingData(trackingId, silent = false) {
   }
 
   try {
-    const res = await fetch(`https://shipping-backendee.onrender.com/api/shipments/track/${encodeURIComponent(id)}`, {
+    const res = await fetch(`https://shipping-backendee-production.up.railway.app/api/shipments/track/${encodeURIComponent(id)}`, {
       method: 'GET',
       headers: { 'Accept': 'application/json' }
     });
