@@ -442,3 +442,287 @@
     align-items: flex-start;
   }
 }
+
+.advanced-tracking-wrap{
+  max-width: 1000px;
+  margin: 30px auto;
+  padding: 0 16px 40px;
+}
+
+.track-top-card,
+.track-progress-card,
+.track-map-card,
+.track-timeline-card,
+.customs-card{
+  background: #fff;
+  border-radius: 18px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+.track-header-row{
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+
+.track-title{
+  margin: 0 0 8px;
+  font-size: 38px;
+  line-height: 1.1;
+  font-weight: 800;
+  color: #111827;
+}
+
+.track-sub{
+  margin: 0;
+  color: #4b5563;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.track-badge{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #eef6ff;
+  color: #0b63b6;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.track-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.track-box{
+  background: #f9fafb;
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.track-box-label{
+  display: block;
+  font-size: 13px;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+.track-box-value{
+  font-size: 24px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.track-progress-card h3,
+.track-map-card h3,
+.track-timeline-card h3,
+.customs-card h3{
+  margin: 0 0 16px;
+  font-size: 28px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.delivery-progress-wrap{
+  margin: 12px 0 20px;
+}
+
+.delivery-progress-line{
+  position: relative;
+  height: 8px;
+  background: #dbeafe;
+  border-radius: 999px;
+  overflow: visible;
+}
+
+.delivery-progress-fill{
+  height: 100%;
+  background: linear-gradient(90deg, #0b63b6, #3b82f6);
+  border-radius: 999px;
+}
+
+.delivery-moving-pin{
+  position: absolute;
+  top: -14px;
+  transform: translateX(-50%);
+  font-size: 22px;
+}
+
+.shipping-steps{
+  display: grid;
+  gap: 12px;
+}
+
+.track-step{
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  background: #f9fafb;
+  border-radius: 14px;
+  padding: 16px;
+  border-left: 4px solid #d1d5db;
+}
+
+.track-step.active{
+  background: #eef6ff;
+  border-left-color: #0b63b6;
+}
+
+.track-step-icon{
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e5e7eb;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.track-step.active .track-step-icon{
+  background: #0b63b6;
+  color: #fff;
+}
+
+.track-step-content{
+  flex: 1;
+}
+
+.track-step-title{
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.track-step-meta{
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.auto-update-note{
+  margin-top: 14px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.customs-badge{
+  display: inline-block;
+  background: #fff7ed;
+  color: #c2410c;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 14px;
+}
+
+.customs-title{
+  margin: 0 0 12px;
+}
+
+.customs-text{
+  color: #4b5563;
+  line-height: 1.7;
+  margin: 0 0 12px;
+}
+
+.premium-support{
+  background: #f9fafb;
+  border-radius: 14px;
+  padding: 18px;
+  margin-top: 18px;
+}
+
+.contact-card{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  background: #fff;
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-top: 12px;
+  border: 1px solid #e5e7eb;
+}
+
+.contact-text-wrap{
+  display: flex;
+  flex-direction: column;
+}
+
+.contact-title{
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.contact-value{
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.contact-badge{
+  margin-left: auto;
+  background: #eef6ff;
+  color: #0b63b6;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.contact-badge.online{
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.customs-contact-note{
+  margin-top: 12px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+@media (max-width: 640px){
+  .track-title{
+    font-size: 28px;
+  }
+
+  .track-sub{
+    font-size: 16px;
+  }
+
+  .track-box-value{
+    font-size: 20px;
+  }
+
+  .track-progress-card h3,
+  .track-map-card h3,
+  .track-timeline-card h3,
+  .customs-card h3{
+    font-size: 22px;
+  }
+
+  .track-top-card,
+  .track-progress-card,
+  .track-map-card,
+  .track-timeline-card,
+  .customs-card{
+    padding: 18px;
+  }
+}
