@@ -48,6 +48,8 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 8080;
 
+app.use('/api/shipments', shipments);
+
 app.get('/', (req, res) => {
   res.send('Backend is running');
 });
