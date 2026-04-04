@@ -413,7 +413,7 @@ async function loadTrackingData(trackingId, silent = false) {
 
         ${showCustomsNotice ? `
         <div class="customs-card">
-          <details class="track-collapsible">
+          <details class="track-collapsible" open>
             <summary>
               <div>
                 <div class="customs-badge">${window.i18nGet ? window.i18nGet('customsClearanceUpdate') : 'Customs Clearance Update'}</div>
@@ -444,7 +444,7 @@ async function loadTrackingData(trackingId, silent = false) {
         ` : ''}
 
         <div class="track-timeline-card">
-          <details class="track-collapsible">
+          <details class="track-collapsible" open>
             <summary>
               <h3>${window.i18nGet ? window.i18nGet('detailedTimeline') : 'Detailed Shipment Timeline'}</h3>
             </summary>
