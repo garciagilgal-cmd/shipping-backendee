@@ -334,7 +334,7 @@ async function loadTrackingData(trackingId, silent = false) {
 
     const showCustomsNotice = normalizedStatus === 'Customs Clearance' || customsStatusesRequiringAttention.includes(shipment.customsStatus);
 
-    const timelineEntries = (shipment.timelineHistory || []).slice(0, 4);
+    const timelineEntries = (shipment.timelineHistory || []);
     const timelineHtml = timelineEntries.map(item => `
       <div class="timeline-item">
         <div class="timeline-dot"></div>
